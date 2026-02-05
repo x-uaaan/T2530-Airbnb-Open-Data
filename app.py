@@ -12,7 +12,25 @@ import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="Airbnb Analytics System", layout="wide")
 sns.set(style="whitegrid")
-st.title("🏠 Airbnb Analytics System")
+st.markdown(
+    """
+    <style>
+    .stButton > button {
+        background-color: #0d6efd !important;
+    }
+    .stButton > button:hover {
+        background-color: #0b5ed7 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+st.markdown(
+    """
+    <h1 style="text-align:center; margin-bottom: 0.25rem;">🏠 Airbnb Analytics System</h1>
+    """,
+    unsafe_allow_html=True,
+)
 
 #-------------------------------------------------------------------------- Load Data -------------------------------------------------------------------------#
  
@@ -21,7 +39,6 @@ if "data" not in st.session_state:
     st.session_state.data = df
 
 df = st.session_state.data
-st.success("Retail data loaded successfully!")
 
 if "total price" not in df.columns:
     if "price" in df.columns and "service fee" in df.columns:
@@ -382,20 +399,22 @@ def decision_tree_predict():
         )
         return None
 
-    st.subheader("Enter Information")
+    st.markdown("<h3 style='text-align:center;'>Enter Information</h3>", unsafe_allow_html=True)
 
-    total_price = st.number_input("Total price per night", min_value=0.0)
-    number_of_reviews = st.number_input("Number of reviews", min_value=0.0)
-    review_rate = st.number_input(
-        "Review rate number",
-        min_value=0.0,
-        max_value=5.0,
-        value=4.0,
-        step=0.01,
-        format="%.2f",
-    )
+    left_col, center_col, right_col = st.columns([1, 2, 1])
+    with center_col:
+        total_price = st.number_input("Total price per night", min_value=0.0)
+        number_of_reviews = st.number_input("Number of reviews", min_value=0.0)
+        review_rate = st.number_input(
+            "Review rate number",
+            min_value=0.0,
+            max_value=5.0,
+            value=3.0,
+            step=0.01,
+            format="%.2f",
+        )
 
-    run_prediction = st.button("Run Prediction")
+        run_prediction = st.button("Run Prediction", use_container_width=True)
     if not run_prediction:
         return "pending"
 
@@ -454,16 +473,70 @@ def decision_tree_predict():
 def smart():
     prediction = decision_tree_predict()
     if prediction == "pending":
-        st.info("Click Run Prediction to see the result.")
+        _show_info_badge(
+            "Result",
+            "#0041c2",
+            "#e7f1ff",
+        )
     elif prediction is None:
-        st.info("Result: Insufficient data")
+        _show_info_badge(
+            "Result: Insufficient data",
+            "#ffc107",
+            "#fff4d6",
+        )
     elif prediction == "Risky":
-        st.markdown("🟥 Risky")
+        _show_result_badge("Risky", "#dc3545")
     elif prediction == "Standard":
-        st.markdown("🟨 Standard")
+        _show_result_badge("Standard", "#c49102")
     else:
-        st.markdown("🟩 Elite")
+        _show_result_badge("Elite", "#008000")
 
+
+def _show_result_badge(label, color):
+    st.markdown(
+        f"""
+        <div style="display:flex; justify-content:center; margin-top: 1rem;">
+            <div style="
+                border: 1px solid {color};
+                border-radius: 8px;
+                padding: 6px 16px;
+                text-align:center;
+                min-width: 260px;
+                background: {color};
+                box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            ">
+                <div style="font-size: 16px; font-weight: 600;">
+                    {label}
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _show_info_badge(message, border_color, background_color):
+    st.markdown(
+        f"""
+        <div style="display:flex; justify-content:center; margin-top: 1rem;">
+            <div style="
+                border: 1px solid {border_color};
+                border-radius: 8px;
+                padding: 6px 16px;
+                text-align:center;
+                min-width: 260px;
+                background: {background_color};
+                color: #0f172a;
+                box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            ">
+                <div style="font-size: 16px; font-weight: 600;">
+                    {message}
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 # ------------------------------------------------------------------------- Main page -------------------------------------------------------------------------#
 
@@ -492,7 +565,6 @@ tab = st.sidebar.radio("Select role",[
 
 if tab == "Smart rating":
     st.session_state.role = "smart"
-    st.sidebar.header("Smart Analysis")
     smart()
 
 elif tab == "Dashboard":
