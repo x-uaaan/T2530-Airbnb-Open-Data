@@ -1,0 +1,12 @@
+{
+  "normalized_cols": [
+    "number of reviews_norm",
+    "reviews per month_norm",
+    "review rate number_norm",
+    "total price_norm",
+    "score_norm"
+  ],
+  "score_min": 0.001168761322463768,
+  "score_max": 0.9003623188405797,
+  "reviews_per_month_norm_default": 0.011779086565173909
+}
